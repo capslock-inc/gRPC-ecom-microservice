@@ -1,0 +1,31 @@
+syntax = "proto3";
+
+package cartmodel;
+
+option go_package = "github.com/capslock-inc/grpc-demo;cartmodel";
+
+service CartService{
+    rpc GetCartItem(userid) returns (cart);
+    rpc CreateNewCart(userid) returns (status);
+    rpc AddToCart(productid) returns (status);
+    rpc DeleteCart(userid) returns (status);
+    rpc DeleteCartItem(productid) returns (status);
+    rpc Checkout(emptyparam) returns (status);
+    rpc Healthy(emptyparam) returns (status);
+}
+
+message emptyparam{}
+
+message status{
+    string value =1;
+}
+message userid{
+    string id=1;
+}
+message productid{
+    string id =1;
+}
+message cart {
+    string id = 1;
+    repeated string productidlist = 2;
+}
