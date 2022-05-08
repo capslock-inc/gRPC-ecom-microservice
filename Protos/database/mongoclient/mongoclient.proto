@@ -7,10 +7,10 @@ option go_package = "github.com/capslock-inc/grpc-demo;mongoclientmodel";
 service MongoClientService{
     rpc GetCartItemByUserId(userid) returns (cart);
     rpc CreateNewCart(userid) returns (status);
-    rpc AddProductToCart(productid) returns (status);
+    rpc AddProductToCart(addproduct) returns (status);
     rpc DeleteCartByUserId(userid) returns (status);
-    rpc DeleteCartItemByProductId(productid) returns (status);
-    rpc CheckoutCart(emptyparam) returns (status);
+    rpc DeleteCartItemByProductId(addproduct) returns (status);
+    rpc CheckoutCart(userid) returns (status);
     rpc Healthy(emptyparam) returns (status);
 }
 
@@ -22,10 +22,12 @@ message status{
 message userid{
     string id=1;
 }
-message productid{
-    string id =1;
+message addproduct{
+    string userid =1;
+    string productid=2;
 }
 message cart {
     string id = 1;
     repeated string productidlist = 2;
+    
 }

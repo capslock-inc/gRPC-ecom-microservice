@@ -3,17 +3,20 @@ package main
 import (
 	"context"
 	"flag"
+	"net"
 	"time"
 
 	"fmt"
 	"log"
 	"os"
 
+	mongoclientmodel "github.com/capslock-inc/gprc-demo/Protos/database/mongoclient"
 	core "github.com/capslock-inc/gprc-demo/Servers/mongoclient/Core"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
+	"google.golang.org/grpc"
 )
 
 func DbINIT(port int) (*mongo.Client, context.Context) {
@@ -56,30 +59,25 @@ func DbINIT(port int) (*mongo.Client, context.Context) {
 
 func main() {
 	// -port flag in terminal
-	p := flag.Int("port", 27017, "mongodb port")
+	mongoport := flag.Int("mongoport", 27017, "mongodb port")
 	// parsing flag data
 	flag.Parse()
-	port := *p
-
 	// initiating mongodb
-	client, ctx := DbINIT(port)
+	client, ctx := DbINIT(*mongoport)
 
-	// create new cart for user
-	// statement, err := core.CreateCart(&model.CartItem{
-	// 	UserId: "test2",
-	// 	ProductId: []string{
-	// 		"firstitem",
-	// 		"seconditem",
-	// 	},
-	// }, client)
-	// if err != nil {
-	// 	log.Fatalf("error writing : %v", err)
-	// } else {
-	// 	fmt.Printf("%s", statement)
-	// }
-
-	arr := core.GetCart(client)
-	fmt.Println(arr)
+	// grpc server init
+	serverport := flag.Int("port", 8401, "mongodb port")
+	port := fmt.Sprintf(":%d", *serverport)
+	listen, err := net.Listen("tcp", port)
+	if err != nil {
+		log.Fatalf("error initiating net.listen : %v", err)
+	}
+	grpcserver := grpc.NewServer()
+	mongoclientmodel.RegisterMongoClientServiceServer(grpcserver, &core.MongoClientServer{Client: client})
+	log.Printf("server listening to %v", listen.Addr())
+	if err := grpcserver.Serve(listen); err != nil {
+		log.Fatalf("failed to serve: %v", err)
+	}
 
 	// terminating db connection when program is done
 	defer client.Disconnect(ctx)

@@ -20,10 +20,10 @@ const _ = grpc.SupportPackageIsVersion7
 type MongoClientServiceClient interface {
 	GetCartItemByUserId(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Cart, error)
 	CreateNewCart(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error)
-	AddProductToCart(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error)
+	AddProductToCart(ctx context.Context, in *Addproduct, opts ...grpc.CallOption) (*Status, error)
 	DeleteCartByUserId(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error)
-	DeleteCartItemByProductId(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error)
-	CheckoutCart(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
+	DeleteCartItemByProductId(ctx context.Context, in *Addproduct, opts ...grpc.CallOption) (*Status, error)
+	CheckoutCart(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error)
 	Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
 }
 
@@ -53,7 +53,7 @@ func (c *mongoClientServiceClient) CreateNewCart(ctx context.Context, in *Userid
 	return out, nil
 }
 
-func (c *mongoClientServiceClient) AddProductToCart(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error) {
+func (c *mongoClientServiceClient) AddProductToCart(ctx context.Context, in *Addproduct, opts ...grpc.CallOption) (*Status, error) {
 	out := new(Status)
 	err := c.cc.Invoke(ctx, "/mongoclientmodel.MongoClientService/AddProductToCart", in, out, opts...)
 	if err != nil {
@@ -71,7 +71,7 @@ func (c *mongoClientServiceClient) DeleteCartByUserId(ctx context.Context, in *U
 	return out, nil
 }
 
-func (c *mongoClientServiceClient) DeleteCartItemByProductId(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error) {
+func (c *mongoClientServiceClient) DeleteCartItemByProductId(ctx context.Context, in *Addproduct, opts ...grpc.CallOption) (*Status, error) {
 	out := new(Status)
 	err := c.cc.Invoke(ctx, "/mongoclientmodel.MongoClientService/DeleteCartItemByProductId", in, out, opts...)
 	if err != nil {
@@ -80,7 +80,7 @@ func (c *mongoClientServiceClient) DeleteCartItemByProductId(ctx context.Context
 	return out, nil
 }
 
-func (c *mongoClientServiceClient) CheckoutCart(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error) {
+func (c *mongoClientServiceClient) CheckoutCart(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error) {
 	out := new(Status)
 	err := c.cc.Invoke(ctx, "/mongoclientmodel.MongoClientService/CheckoutCart", in, out, opts...)
 	if err != nil {
@@ -104,10 +104,10 @@ func (c *mongoClientServiceClient) Healthy(ctx context.Context, in *Emptyparam, 
 type MongoClientServiceServer interface {
 	GetCartItemByUserId(context.Context, *Userid) (*Cart, error)
 	CreateNewCart(context.Context, *Userid) (*Status, error)
-	AddProductToCart(context.Context, *Productid) (*Status, error)
+	AddProductToCart(context.Context, *Addproduct) (*Status, error)
 	DeleteCartByUserId(context.Context, *Userid) (*Status, error)
-	DeleteCartItemByProductId(context.Context, *Productid) (*Status, error)
-	CheckoutCart(context.Context, *Emptyparam) (*Status, error)
+	DeleteCartItemByProductId(context.Context, *Addproduct) (*Status, error)
+	CheckoutCart(context.Context, *Userid) (*Status, error)
 	Healthy(context.Context, *Emptyparam) (*Status, error)
 	mustEmbedUnimplementedMongoClientServiceServer()
 }
@@ -122,16 +122,16 @@ func (UnimplementedMongoClientServiceServer) GetCartItemByUserId(context.Context
 func (UnimplementedMongoClientServiceServer) CreateNewCart(context.Context, *Userid) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateNewCart not implemented")
 }
-func (UnimplementedMongoClientServiceServer) AddProductToCart(context.Context, *Productid) (*Status, error) {
+func (UnimplementedMongoClientServiceServer) AddProductToCart(context.Context, *Addproduct) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddProductToCart not implemented")
 }
 func (UnimplementedMongoClientServiceServer) DeleteCartByUserId(context.Context, *Userid) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCartByUserId not implemented")
 }
-func (UnimplementedMongoClientServiceServer) DeleteCartItemByProductId(context.Context, *Productid) (*Status, error) {
+func (UnimplementedMongoClientServiceServer) DeleteCartItemByProductId(context.Context, *Addproduct) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCartItemByProductId not implemented")
 }
-func (UnimplementedMongoClientServiceServer) CheckoutCart(context.Context, *Emptyparam) (*Status, error) {
+func (UnimplementedMongoClientServiceServer) CheckoutCart(context.Context, *Userid) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CheckoutCart not implemented")
 }
 func (UnimplementedMongoClientServiceServer) Healthy(context.Context, *Emptyparam) (*Status, error) {
@@ -187,7 +187,7 @@ func _MongoClientService_CreateNewCart_Handler(srv interface{}, ctx context.Cont
 }
 
 func _MongoClientService_AddProductToCart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Productid)
+	in := new(Addproduct)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -199,7 +199,7 @@ func _MongoClientService_AddProductToCart_Handler(srv interface{}, ctx context.C
 		FullMethod: "/mongoclientmodel.MongoClientService/AddProductToCart",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoClientServiceServer).AddProductToCart(ctx, req.(*Productid))
+		return srv.(MongoClientServiceServer).AddProductToCart(ctx, req.(*Addproduct))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -223,7 +223,7 @@ func _MongoClientService_DeleteCartByUserId_Handler(srv interface{}, ctx context
 }
 
 func _MongoClientService_DeleteCartItemByProductId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Productid)
+	in := new(Addproduct)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -235,13 +235,13 @@ func _MongoClientService_DeleteCartItemByProductId_Handler(srv interface{}, ctx 
 		FullMethod: "/mongoclientmodel.MongoClientService/DeleteCartItemByProductId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoClientServiceServer).DeleteCartItemByProductId(ctx, req.(*Productid))
+		return srv.(MongoClientServiceServer).DeleteCartItemByProductId(ctx, req.(*Addproduct))
 	}
 	return interceptor(ctx, in, info, handler)
 }
 
 func _MongoClientService_CheckoutCart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Emptyparam)
+	in := new(Userid)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -253,7 +253,7 @@ func _MongoClientService_CheckoutCart_Handler(srv interface{}, ctx context.Conte
 		FullMethod: "/mongoclientmodel.MongoClientService/CheckoutCart",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoClientServiceServer).CheckoutCart(ctx, req.(*Emptyparam))
+		return srv.(MongoClientServiceServer).CheckoutCart(ctx, req.(*Userid))
 	}
 	return interceptor(ctx, in, info, handler)
 }
