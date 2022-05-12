@@ -3,7 +3,9 @@ module github.com/capslock-inc/gprc-demo
 go 1.18
 
 require (
+	github.com/gofrs/uuid v4.2.0+incompatible
 	github.com/joho/godotenv v1.4.0
+	github.com/lib/pq v1.10.5
 	go.mongodb.org/mongo-driver v1.9.1
 	google.golang.org/grpc v1.46.0
 	google.golang.org/protobuf v1.28.0

@@ -1,0 +1,17 @@
+{
+    "sqltools.connections": [
+        {
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 5434,
+            "askForPassword": true,
+            "driver": "PostgreSQL",
+            "database": "ecom",
+            "username": "admin",
+            "name": "ecom"
+        }
+    ],
+    "editor.tokenColorCustomizations": {
+        
+    }
+}
