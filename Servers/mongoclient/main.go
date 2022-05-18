@@ -66,7 +66,7 @@ func main() {
 	client, ctx := DbINIT(*mongoport)
 
 	// grpc server init
-	serverport := flag.Int("port", 8401, "mongodb port")
+	serverport := flag.Int("port", 8401, "server port")
 	port := fmt.Sprintf(":%d", *serverport)
 	listen, err := net.Listen("tcp", port)
 	if err != nil {

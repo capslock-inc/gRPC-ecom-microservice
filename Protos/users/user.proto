@@ -24,8 +24,7 @@ message userid{
 message user {
     string id = 1;
     string name = 2;
-    string description = 3;
-    string password = 4;
+    string password = 3;
 }
 message userlist {
     repeated user list = 1;

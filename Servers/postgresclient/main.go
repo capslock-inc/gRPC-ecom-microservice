@@ -1,12 +1,19 @@
 package main
 
 import (
-	"context"
 	"database/sql"
+	"flag"
 	"fmt"
 	"log"
+	"net"
 
+	"google.golang.org/grpc"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+
+	postgresclientmodel "github.com/capslock-inc/gprc-demo/Protos/database/postgresclient"
 	core "github.com/capslock-inc/gprc-demo/Servers/postgresclient/Core"
+	model "github.com/capslock-inc/gprc-demo/Servers/postgresclient/Model"
 	_ "github.com/lib/pq"
 )
 
@@ -14,35 +21,56 @@ import (
 
 const (
 	host     = "localhost"
-	port     = 5434
 	user     = "admin"
 	password = "mypassword"
 	dbname   = "ecom"
 )
 
-var connstring string = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
-
-func PostgresINIT() *sql.DB {
+func PostgresINIT(port int) (*sql.DB, *gorm.DB) {
+	var connstring string = fmt.Sprintf("host=%s port=%d user=%s password=%s dbname=%s sslmode=disable", host, port, user, password, dbname)
 	psql, err := sql.Open("postgres", connstring)
 	if err != nil {
 		log.Fatalf("error connecting postgres: %v", err)
 	} else {
 		log.Printf("connection established")
 	}
-	return psql
+	db, err := gorm.Open(postgres.New(postgres.Config{
+		Conn: psql,
+	}), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("gorm :: error establishing connection : %v", err)
+	} else {
+		log.Println("gorm :: connection established")
+	}
+
+	return psql, db
 }
+
 func main() {
-	dbconn := PostgresINIT()
+	p := flag.Int("Postgresport", 5434, "postgres port")
+	flag.Parse()
+
+	dbconn, ormdb := PostgresINIT(*p)
 
 	// create table if not exist
-	createtablequery := `CREATE TABLE IF NOT EXISTS product(product_id int primary key, product_name text,  product_price int,description text);`
-	res, err := dbconn.ExecContext(context.TODO(), createtablequery)
+	ormdb.AutoMigrate(&model.Product{})
+	ormdb.AutoMigrate(&model.User{})
+
+	serverport := flag.Int("port", 8401, "server port")
+	port := fmt.Sprintf(":%d", *serverport)
+	listen, err := net.Listen("tcp", port)
 	if err != nil {
-		log.Fatalf("could not able to create table: %v", err)
-	} else {
-		log.Printf("table created sucessfully :%v", res)
+		log.Fatalf("error listening to the port:%s :: %v", port, err)
 	}
-	core.InsertProduct(dbconn)
+	grpcserver := grpc.NewServer()
+	postgresclientmodel.RegisterPostgresClientServiceServer(grpcserver, &core.PostgresClientServer{
+		Db: ormdb,
+	})
+	log.Printf("listen to %s", port)
+	if err := grpcserver.Serve(listen); err != nil {
+		log.Fatalf("error serving grpc server :: %v", err)
+	}
+
 	defer dbconn.Close()
 
 }

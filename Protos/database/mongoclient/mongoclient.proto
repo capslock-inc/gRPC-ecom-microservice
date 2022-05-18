@@ -10,7 +10,6 @@ service MongoClientService{
     rpc AddProductToCart(addproduct) returns (status);
     rpc DeleteCartByUserId(userid) returns (status);
     rpc DeleteCartItemByProductId(addproduct) returns (status);
-    rpc CheckoutCart(userid) returns (status);
     rpc Healthy(emptyparam) returns (status);
 }
 

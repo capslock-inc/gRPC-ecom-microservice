@@ -10,7 +10,6 @@ service CartService{
     rpc AddToCart(productid) returns (status);
     rpc DeleteCart(userid) returns (status);
     rpc DeleteCartItem(productid) returns (status);
-    rpc Checkout(emptyparam) returns (status);
     rpc Healthy(emptyparam) returns (status);
 }
 
