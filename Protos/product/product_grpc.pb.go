@@ -23,7 +23,6 @@ type ProductServiceClient interface {
 	AddNewProduct(ctx context.Context, in *Product, opts ...grpc.CallOption) (*Status, error)
 	UpdateProduct(ctx context.Context, in *Product, opts ...grpc.CallOption) (*Status, error)
 	DeleteProduct(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error)
-	Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
 }
 
 type productServiceClient struct {
@@ -79,15 +78,6 @@ func (c *productServiceClient) DeleteProduct(ctx context.Context, in *Productid,
 	return out, nil
 }
 
-func (c *productServiceClient) Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/productmodel.ProductService/Healthy", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // ProductServiceServer is the server API for ProductService service.
 // All implementations must embed UnimplementedProductServiceServer
 // for forward compatibility
@@ -97,7 +87,6 @@ type ProductServiceServer interface {
 	AddNewProduct(context.Context, *Product) (*Status, error)
 	UpdateProduct(context.Context, *Product) (*Status, error)
 	DeleteProduct(context.Context, *Productid) (*Status, error)
-	Healthy(context.Context, *Emptyparam) (*Status, error)
 	mustEmbedUnimplementedProductServiceServer()
 }
 
@@ -119,9 +108,6 @@ func (UnimplementedProductServiceServer) UpdateProduct(context.Context, *Product
 }
 func (UnimplementedProductServiceServer) DeleteProduct(context.Context, *Productid) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
-}
-func (UnimplementedProductServiceServer) Healthy(context.Context, *Emptyparam) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Healthy not implemented")
 }
 func (UnimplementedProductServiceServer) mustEmbedUnimplementedProductServiceServer() {}
 
@@ -226,24 +212,6 @@ func _ProductService_DeleteProduct_Handler(srv interface{}, ctx context.Context,
 	return interceptor(ctx, in, info, handler)
 }
 
-func _ProductService_Healthy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Emptyparam)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(ProductServiceServer).Healthy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/productmodel.ProductService/Healthy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(ProductServiceServer).Healthy(ctx, req.(*Emptyparam))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // ProductService_ServiceDesc is the grpc.ServiceDesc for ProductService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -270,10 +238,6 @@ var ProductService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProduct",
 			Handler:    _ProductService_DeleteProduct_Handler,
-		},
-		{
-			MethodName: "Healthy",
-			Handler:    _ProductService_Healthy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

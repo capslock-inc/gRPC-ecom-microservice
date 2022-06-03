@@ -10,7 +10,6 @@ service UserService{
     rpc AddNewUser(user) returns (status);
     rpc UpdateUser (user) returns (status);
     rpc DeleteUser(userid) returns (status);
-    rpc Healthy(emptyparam) returns (status);
 }
 
 message emptyparam{}

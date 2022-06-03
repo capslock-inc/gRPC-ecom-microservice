@@ -28,7 +28,6 @@ type PostgresClientServiceClient interface {
 	AddProduct(ctx context.Context, in *Product, opts ...grpc.CallOption) (*Status, error)
 	UpdateProduct(ctx context.Context, in *Product, opts ...grpc.CallOption) (*Status, error)
 	DeleteProduct(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error)
-	Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
 }
 
 type postgresClientServiceClient struct {
@@ -129,15 +128,6 @@ func (c *postgresClientServiceClient) DeleteProduct(ctx context.Context, in *Pro
 	return out, nil
 }
 
-func (c *postgresClientServiceClient) Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/postgresclientmodel.PostgresClientService/Healthy", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // PostgresClientServiceServer is the server API for PostgresClientService service.
 // All implementations must embed UnimplementedPostgresClientServiceServer
 // for forward compatibility
@@ -152,7 +142,6 @@ type PostgresClientServiceServer interface {
 	AddProduct(context.Context, *Product) (*Status, error)
 	UpdateProduct(context.Context, *Product) (*Status, error)
 	DeleteProduct(context.Context, *Productid) (*Status, error)
-	Healthy(context.Context, *Emptyparam) (*Status, error)
 	mustEmbedUnimplementedPostgresClientServiceServer()
 }
 
@@ -189,9 +178,6 @@ func (UnimplementedPostgresClientServiceServer) UpdateProduct(context.Context, *
 }
 func (UnimplementedPostgresClientServiceServer) DeleteProduct(context.Context, *Productid) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteProduct not implemented")
-}
-func (UnimplementedPostgresClientServiceServer) Healthy(context.Context, *Emptyparam) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Healthy not implemented")
 }
 func (UnimplementedPostgresClientServiceServer) mustEmbedUnimplementedPostgresClientServiceServer() {}
 
@@ -386,24 +372,6 @@ func _PostgresClientService_DeleteProduct_Handler(srv interface{}, ctx context.C
 	return interceptor(ctx, in, info, handler)
 }
 
-func _PostgresClientService_Healthy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Emptyparam)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(PostgresClientServiceServer).Healthy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/postgresclientmodel.PostgresClientService/Healthy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(PostgresClientServiceServer).Healthy(ctx, req.(*Emptyparam))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // PostgresClientService_ServiceDesc is the grpc.ServiceDesc for PostgresClientService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -450,10 +418,6 @@ var PostgresClientService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteProduct",
 			Handler:    _PostgresClientService_DeleteProduct_Handler,
-		},
-		{
-			MethodName: "Healthy",
-			Handler:    _PostgresClientService_Healthy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

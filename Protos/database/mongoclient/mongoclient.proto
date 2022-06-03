@@ -10,7 +10,7 @@ service MongoClientService{
     rpc AddProductToCart(addproduct) returns (status);
     rpc DeleteCartByUserId(userid) returns (status);
     rpc DeleteCartItemByProductId(addproduct) returns (status);
-    rpc Healthy(emptyparam) returns (status);
+    
 }
 
 message emptyparam{}

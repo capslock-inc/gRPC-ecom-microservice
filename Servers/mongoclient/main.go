@@ -74,7 +74,7 @@ func main() {
 	}
 	grpcserver := grpc.NewServer()
 	mongoclientmodel.RegisterMongoClientServiceServer(grpcserver, &core.MongoClientServer{Client: client})
-	log.Printf("server listening to %v", listen.Addr())
+	log.Printf("🚀 server listening to %v", listen.Addr())
 	if err := grpcserver.Serve(listen); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

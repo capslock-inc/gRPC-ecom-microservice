@@ -17,7 +17,6 @@ service PostgresClientService{
     rpc UpdateProduct (product) returns (status);
     rpc DeleteProduct(productid) returns (status);
 
-    rpc Healthy(emptyparam) returns (status);
 }
 
 message userid{

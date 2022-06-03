@@ -23,8 +23,6 @@ type MongoClientServiceClient interface {
 	AddProductToCart(ctx context.Context, in *Addproduct, opts ...grpc.CallOption) (*Status, error)
 	DeleteCartByUserId(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error)
 	DeleteCartItemByProductId(ctx context.Context, in *Addproduct, opts ...grpc.CallOption) (*Status, error)
-	CheckoutCart(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error)
-	Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
 }
 
 type mongoClientServiceClient struct {
@@ -80,24 +78,6 @@ func (c *mongoClientServiceClient) DeleteCartItemByProductId(ctx context.Context
 	return out, nil
 }
 
-func (c *mongoClientServiceClient) CheckoutCart(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/mongoclientmodel.MongoClientService/CheckoutCart", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *mongoClientServiceClient) Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/mongoclientmodel.MongoClientService/Healthy", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // MongoClientServiceServer is the server API for MongoClientService service.
 // All implementations must embed UnimplementedMongoClientServiceServer
 // for forward compatibility
@@ -107,8 +87,6 @@ type MongoClientServiceServer interface {
 	AddProductToCart(context.Context, *Addproduct) (*Status, error)
 	DeleteCartByUserId(context.Context, *Userid) (*Status, error)
 	DeleteCartItemByProductId(context.Context, *Addproduct) (*Status, error)
-	CheckoutCart(context.Context, *Userid) (*Status, error)
-	Healthy(context.Context, *Emptyparam) (*Status, error)
 	mustEmbedUnimplementedMongoClientServiceServer()
 }
 
@@ -130,12 +108,6 @@ func (UnimplementedMongoClientServiceServer) DeleteCartByUserId(context.Context,
 }
 func (UnimplementedMongoClientServiceServer) DeleteCartItemByProductId(context.Context, *Addproduct) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCartItemByProductId not implemented")
-}
-func (UnimplementedMongoClientServiceServer) CheckoutCart(context.Context, *Userid) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CheckoutCart not implemented")
-}
-func (UnimplementedMongoClientServiceServer) Healthy(context.Context, *Emptyparam) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Healthy not implemented")
 }
 func (UnimplementedMongoClientServiceServer) mustEmbedUnimplementedMongoClientServiceServer() {}
 
@@ -240,42 +212,6 @@ func _MongoClientService_DeleteCartItemByProductId_Handler(srv interface{}, ctx 
 	return interceptor(ctx, in, info, handler)
 }
 
-func _MongoClientService_CheckoutCart_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Userid)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MongoClientServiceServer).CheckoutCart(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mongoclientmodel.MongoClientService/CheckoutCart",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoClientServiceServer).CheckoutCart(ctx, req.(*Userid))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _MongoClientService_Healthy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Emptyparam)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(MongoClientServiceServer).Healthy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/mongoclientmodel.MongoClientService/Healthy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(MongoClientServiceServer).Healthy(ctx, req.(*Emptyparam))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // MongoClientService_ServiceDesc is the grpc.ServiceDesc for MongoClientService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -302,14 +238,6 @@ var MongoClientService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCartItemByProductId",
 			Handler:    _MongoClientService_DeleteCartItemByProductId_Handler,
-		},
-		{
-			MethodName: "CheckoutCart",
-			Handler:    _MongoClientService_CheckoutCart_Handler,
-		},
-		{
-			MethodName: "Healthy",
-			Handler:    _MongoClientService_Healthy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

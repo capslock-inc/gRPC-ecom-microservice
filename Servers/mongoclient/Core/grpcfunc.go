@@ -24,15 +24,17 @@ type MongoClientServer struct {
 
 // rpc GetCartItemByUserId(userid) returns (cart);
 func (s *MongoClientServer) GetCartItemByUserId(ctx context.Context, incomingdata *mongoclientmodel.Userid) (*mongoclientmodel.Cart, error) {
+	log.Printf("received data: %s", incomingdata.GetId())
 	item, err := GetCartItemByUserId(incomingdata.GetId(), s.Client)
 	if err != nil {
-		log.Fatalf("error geting cart : %v", err)
+		log.Printf("error geting cart : %v", err)
 	}
 	return &mongoclientmodel.Cart{Id: item.UserId, Productidlist: item.ProductId}, nil
 }
 
 // rpc CreateNewCart(userid) returns (status);
 func (s *MongoClientServer) CreateNewCart(ctx context.Context, incomingdata *mongoclientmodel.Userid) (*mongoclientmodel.Status, error) {
+	log.Println(incomingdata.GetId())
 	arr, err := CreateNewCart(&model.CartItem{
 		UserId:    incomingdata.GetId(),
 		ProductId: []string{},
@@ -46,6 +48,7 @@ func (s *MongoClientServer) CreateNewCart(ctx context.Context, incomingdata *mon
 // rpc AddProductToCart(productid) returns (status);
 
 func (s *MongoClientServer) AddProductToCart(ctx context.Context, incomingdata *mongoclientmodel.Addproduct) (*mongoclientmodel.Status, error) {
+	log.Println(incomingdata.GetProductid(), incomingdata.GetUserid())
 	arr, err := AddProductToCart(incomingdata.GetUserid(), incomingdata.GetProductid(), s.Client)
 	if err != nil {
 		return &mongoclientmodel.Status{Value: string("unable to add product")}, err
@@ -57,7 +60,7 @@ func (s *MongoClientServer) AddProductToCart(ctx context.Context, incomingdata *
 func (s *MongoClientServer) DeleteCartByUserId(ctx context.Context, incomingdata *mongoclientmodel.Userid) (*mongoclientmodel.Status, error) {
 	arr, err := DeleteCartByUserId(incomingdata.GetId(), s.Client)
 	if err != nil {
-		log.Fatalf("error deleting userid: %v", err)
+		log.Printf("error deleting userid: %v", err)
 		return &mongoclientmodel.Status{Value: arr}, err
 	}
 	return &mongoclientmodel.Status{Value: arr}, nil
@@ -67,14 +70,8 @@ func (s *MongoClientServer) DeleteCartByUserId(ctx context.Context, incomingdata
 func (s *MongoClientServer) DeleteCartItemByProductId(ctx context.Context, incomingdata *mongoclientmodel.Addproduct) (*mongoclientmodel.Status, error) {
 	arr, err := DeleteCartItemByProductId(incomingdata.Userid, incomingdata.Productid, s.Client)
 	if err != nil {
-		log.Fatalf("error deleting product: %v", err)
+		log.Printf("error deleting product: %v", err)
 		return &mongoclientmodel.Status{Value: arr}, err
 	}
 	return &mongoclientmodel.Status{Value: arr}, nil
 }
-
-// // rpc CheckoutCart(emptyparam) returns (status);
-// func (s *MongoClientServer) CheckoutCart(ctx context.Context, incomingdata *mongoclientmodel.Userid) (*mongoclientmodel.Status, error)
-
-// // rpc Healthy(emptyparam) returns (status)
-// func (s *MongoClientServer) Healthy(ctx context.Context, incomingdata *mongoclientmodel.Emptyparam) (*mongoclientmodel.Status, error)

@@ -23,8 +23,6 @@ type CartServiceClient interface {
 	AddToCart(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error)
 	DeleteCart(ctx context.Context, in *Userid, opts ...grpc.CallOption) (*Status, error)
 	DeleteCartItem(ctx context.Context, in *Productid, opts ...grpc.CallOption) (*Status, error)
-	Checkout(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
-	Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error)
 }
 
 type cartServiceClient struct {
@@ -80,24 +78,6 @@ func (c *cartServiceClient) DeleteCartItem(ctx context.Context, in *Productid, o
 	return out, nil
 }
 
-func (c *cartServiceClient) Checkout(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/cartmodel.CartService/Checkout", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *cartServiceClient) Healthy(ctx context.Context, in *Emptyparam, opts ...grpc.CallOption) (*Status, error) {
-	out := new(Status)
-	err := c.cc.Invoke(ctx, "/cartmodel.CartService/Healthy", in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 // CartServiceServer is the server API for CartService service.
 // All implementations must embed UnimplementedCartServiceServer
 // for forward compatibility
@@ -107,8 +87,6 @@ type CartServiceServer interface {
 	AddToCart(context.Context, *Productid) (*Status, error)
 	DeleteCart(context.Context, *Userid) (*Status, error)
 	DeleteCartItem(context.Context, *Productid) (*Status, error)
-	Checkout(context.Context, *Emptyparam) (*Status, error)
-	Healthy(context.Context, *Emptyparam) (*Status, error)
 	mustEmbedUnimplementedCartServiceServer()
 }
 
@@ -130,12 +108,6 @@ func (UnimplementedCartServiceServer) DeleteCart(context.Context, *Userid) (*Sta
 }
 func (UnimplementedCartServiceServer) DeleteCartItem(context.Context, *Productid) (*Status, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCartItem not implemented")
-}
-func (UnimplementedCartServiceServer) Checkout(context.Context, *Emptyparam) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Checkout not implemented")
-}
-func (UnimplementedCartServiceServer) Healthy(context.Context, *Emptyparam) (*Status, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method Healthy not implemented")
 }
 func (UnimplementedCartServiceServer) mustEmbedUnimplementedCartServiceServer() {}
 
@@ -240,42 +212,6 @@ func _CartService_DeleteCartItem_Handler(srv interface{}, ctx context.Context, d
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CartService_Checkout_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Emptyparam)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CartServiceServer).Checkout(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cartmodel.CartService/Checkout",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CartServiceServer).Checkout(ctx, req.(*Emptyparam))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _CartService_Healthy_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(Emptyparam)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CartServiceServer).Healthy(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: "/cartmodel.CartService/Healthy",
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CartServiceServer).Healthy(ctx, req.(*Emptyparam))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 // CartService_ServiceDesc is the grpc.ServiceDesc for CartService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -302,14 +238,6 @@ var CartService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCartItem",
 			Handler:    _CartService_DeleteCartItem_Handler,
-		},
-		{
-			MethodName: "Checkout",
-			Handler:    _CartService_Checkout_Handler,
-		},
-		{
-			MethodName: "Healthy",
-			Handler:    _CartService_Healthy_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

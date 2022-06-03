@@ -10,7 +10,6 @@ service CartService{
     rpc AddToCart(productid) returns (status);
     rpc DeleteCart(userid) returns (status);
     rpc DeleteCartItem(productid) returns (status);
-    rpc Healthy(emptyparam) returns (status);
 }
 
 message emptyparam{}
@@ -23,6 +22,7 @@ message userid{
 }
 message productid{
     string id =1;
+    string userid = 2;
 }
 message cart {
     string id = 1;
