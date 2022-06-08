@@ -56,7 +56,7 @@ func main() {
 	ormdb.AutoMigrate(&model.Product{})
 	ormdb.AutoMigrate(&model.User{})
 
-	serverport := flag.Int("port", 8401, "server port")
+	serverport := flag.Int("port", 8402, "server port")
 	port := fmt.Sprintf(":%d", *serverport)
 	listen, err := net.Listen("tcp", port)
 	if err != nil {

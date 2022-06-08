@@ -32,7 +32,7 @@ func (s *PostgresClientServer) AllUser(ctx context.Context, _ *postgresclientmod
 	var users *postgresclientmodel.Userlist
 	result, err := GetAllUser(s.Db)
 	if err != nil {
-		log.Fatalf("errorgeting all user :%v ", err)
+		log.Printf("errorgeting all user :%v ", err)
 		return nil, err
 	}
 	for _, user := range result {
@@ -50,7 +50,7 @@ func (s *PostgresClientServer) AllUser(ctx context.Context, _ *postgresclientmod
 func (s *PostgresClientServer) UserById(ctx context.Context, id *postgresclientmodel.Userid) (*postgresclientmodel.User, error) {
 	a, err := strconv.Atoi(id.Id)
 	if err != nil {
-		log.Fatalf("error converting string to int")
+		log.Printf("error converting string to int")
 	}
 	result, err := GetUser(a, s.Db)
 	if err != nil {

@@ -88,8 +88,3 @@ func DeleteCartItemByProductId(userid, productid string, client *mongo.Client) (
 		return string("sucessfullly updated"), nil
 	}
 }
-
-// Healthy
-func Healthy() string {
-	return string("healthy")
-}

@@ -6,6 +6,7 @@ import (
 	"net/http"
 	"strconv"
 
+	"github.com/capslock-inc/gprc-demo/Api/asset"
 	"github.com/capslock-inc/gprc-demo/Api/model"
 	cartmodel "github.com/capslock-inc/gprc-demo/Protos/cart"
 	"google.golang.org/grpc"
@@ -46,7 +47,7 @@ func (s *Cart) get(w http.ResponseWriter, r *http.Request) {
 	rpcclient := s.cartclientrpc()
 
 	req := &model.UserId{}
-	err := req.FromJSON(r.Body)
+	err := asset.FromJSON(r.Body, req)
 	if err != nil {
 		s.l.Fatalf("error json marshal ")
 	}
@@ -59,7 +60,7 @@ func (s *Cart) get(w http.ResponseWriter, r *http.Request) {
 		UID:   id,
 		Plist: result.GetProductidlist(),
 	}
-	err = res.ToJson(w)
+	err = asset.ToJson(w, res)
 	if err != nil {
 		w.Write([]byte("error"))
 	}
