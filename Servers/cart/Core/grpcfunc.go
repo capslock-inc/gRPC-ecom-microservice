@@ -31,6 +31,7 @@ func (s *CartServer) GetCartItem(ctx context.Context, data *cartmodel.Userid) (*
 		return nil, err
 	}
 	return &cartmodel.Cart{
+		Id:            data.Id,
 		Productidlist: response.Productidlist,
 	}, nil
 }

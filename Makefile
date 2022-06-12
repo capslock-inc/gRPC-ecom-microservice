@@ -10,9 +10,6 @@ tidy:
 
 mongoclient:
 	go run Servers/mongoclient/main.go
-
-postgresclient:
-	go run Servers/Postgresclient/main.go
-
+	
 alldockerup:
 	sudo docker-compose up -d

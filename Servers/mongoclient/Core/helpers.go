@@ -15,7 +15,7 @@ func GetCartItemByUserId(userid string, client *mongo.Client) (model.CartItem, e
 	var cart model.CartItem
 	err := collection.FindOne(context.TODO(), bson.D{{"_id", userid}}).Decode(&cart)
 	if err != nil {
-		log.Fatalf("err getting cart : %v", err)
+		log.Printf("err getting cart : %v", err)
 		return model.CartItem{}, err
 	}
 	return cart, nil
@@ -27,7 +27,7 @@ func CreateNewCart(data *model.CartItem, client *mongo.Client) (string, error) {
 
 	_, err := collection.InsertOne(context.TODO(), data)
 	if err != nil {
-		log.Fatalf("error adding cartitem : %v", err)
+		log.Printf("error adding cartitem : %v", err)
 		return string(""), err
 	} else {
 		return string("cart created sucessfully"), nil
@@ -39,13 +39,13 @@ func AddProductToCart(userid string, productid string, client *mongo.Client) (st
 	collection := client.Database("cartdb").Collection("cart")
 	curlist, err := GetCartItemByUserId(userid, client)
 	if err != nil {
-		log.Fatalf("error geting cartitem :%v", err)
+		log.Printf("error geting cartitem :%v", err)
 	}
 	newlist := curlist.ProductId
 	newlist = append(newlist, productid)
 	_, err = collection.UpdateOne(context.TODO(), bson.D{{"_id", userid}}, bson.D{{"$set", bson.D{{"productid", newlist}}}})
 	if err != nil {
-		log.Fatalf("error adding item to cart: %v", err)
+		log.Printf("error adding item to cart: %v", err)
 		return string(""), err
 	} else {
 		return string("sucessfullly updated"), nil
@@ -59,7 +59,7 @@ func DeleteCartByUserId(userid string, client *mongo.Client) (string, error) {
 
 	_, err := collection.DeleteOne(context.TODO(), bson.D{{"_id", userid}})
 	if err != nil {
-		log.Fatalf("err getting cart : %v", err)
+		log.Printf("err getting cart : %v", err)
 		return string(""), err
 	}
 	return string("sucessfully deleted"), nil
@@ -71,7 +71,7 @@ func DeleteCartItemByProductId(userid, productid string, client *mongo.Client) (
 	collection := client.Database("cartdb").Collection("cart")
 	cart, err := GetCartItemByUserId(userid, client)
 	if err != nil {
-		log.Fatalf("error geting cartitem :%v", err)
+		log.Printf("error geting cartitem :%v", err)
 	}
 	curlist := cart.ProductId
 	newlist := []string{}
@@ -82,7 +82,7 @@ func DeleteCartItemByProductId(userid, productid string, client *mongo.Client) (
 	}
 	_, err = collection.UpdateOne(context.TODO(), bson.D{{"_id", userid}}, bson.D{{"$set", bson.D{{"productid", newlist}}}})
 	if err != nil {
-		log.Fatalf("error adding item to cart: %v", err)
+		log.Printf("error adding item to cart: %v", err)
 		return string(""), err
 	} else {
 		return string("sucessfullly updated"), nil

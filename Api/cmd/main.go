@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"time"
 
+	"github.com/capslock-inc/gprc-demo/Api/asset"
 	"github.com/capslock-inc/gprc-demo/Api/handlers"
 )
 
@@ -15,10 +16,14 @@ func main() {
 	// logger
 	logs := log.New(os.Stdout, "Ecommerce-Api 👉 ", log.LstdFlags)
 
+	// rpc connection
+	cartRPC := asset.CartClientRPC(logs)
+
 	// server handler
 	servermux := http.NewServeMux()
 	servermux.Handle("/", handlers.NewRoot(logs))
-	servermux.Handle("/cart", handlers.NewCart(logs))
+	servermux.Handle("/cart/", handlers.NewCartWithParams(logs, cartRPC))
+	servermux.Handle("/cart", handlers.NewCart(logs, cartRPC))
 
 	// server
 	server := &http.Server{
@@ -41,7 +46,7 @@ func main() {
 	sig := <-signalchannel
 	logs.Println("🔻 Recived termination : shutting down api... ", sig)
 
-	ctx, _ := context.WithTimeout(context.Background(), 30*time.Second)
-	// defer cancel()
+	ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
+	defer cancel()
 	server.Shutdown(ctx)
 }
