@@ -48,7 +48,7 @@ func (s *CartWithParams) get(w http.ResponseWriter, r *http.Request) {
 
 	jdata, err := json.Marshal(UID)
 	if err != nil {
-		s.l.Println(logmodel.Logdata("101", "😥", err.Error(), "error marshalling json in GET: /cart/"))
+		s.l.Println(logmodel.Logdata("101-api", "😥", err.Error(), "error marshalling json in GET: /cart/"))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error"))
 		return
@@ -58,7 +58,7 @@ func (s *CartWithParams) get(w http.ResponseWriter, r *http.Request) {
 		Id: UID,
 	})
 	if err != nil {
-		s.l.Println(logmodel.Logdata("101", "😥", err.Error(), "error retriving data in GET: /cart/"))
+		s.l.Println(logmodel.Logdata("101-api", "😥", err.Error(), "error retriving data in GET: /cart/"))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error"))
 		return
@@ -72,13 +72,13 @@ func (s *CartWithParams) get(w http.ResponseWriter, r *http.Request) {
 
 	err = res.ToJson(w)
 	if err != nil {
-		s.l.Println(logmodel.Logdata("101", "😥", err.Error(), "error TOJSON in GET: /cart/"))
+		s.l.Println(logmodel.Logdata("101-api", "😥", err.Error(), "error TOJSON in GET: /cart/"))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error"))
 		return
 	}
 
-	s.l.Println(logmodel.Logdata("101", "😃", string(jdata), "GET: /cart/ successfull"))
+	s.l.Println(logmodel.Logdata("101-api", "😃", string(jdata), "GET: /cart/ successfull"))
 }
 
 func (s *CartWithParams) delete(w http.ResponseWriter, r *http.Request) {
@@ -88,7 +88,7 @@ func (s *CartWithParams) delete(w http.ResponseWriter, r *http.Request) {
 
 	jdata, err := json.Marshal(UID)
 	if err != nil {
-		s.l.Println(logmodel.Logdata("102", "😥", err.Error(), "error marshalling json in DELETE: /cart/"))
+		s.l.Println(logmodel.Logdata("102-api", "😥", err.Error(), "error marshalling json in DELETE: /cart/"))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error"))
 		return
@@ -98,7 +98,7 @@ func (s *CartWithParams) delete(w http.ResponseWriter, r *http.Request) {
 		Id: UID,
 	})
 	if err != nil {
-		s.l.Println(logmodel.Logdata("102", "😥", err.Error(), "error deleting in DELETE: /cart/"))
+		s.l.Println(logmodel.Logdata("102-api", "😥", err.Error(), "error deleting in DELETE: /cart/"))
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid id: /cart/id"))
 		w.Write([]byte("Error deleting"))
@@ -107,7 +107,7 @@ func (s *CartWithParams) delete(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte("Successfully deleted"))
-	s.l.Println(logmodel.Logdata("102", "😃", string(jdata), "DELETE: /cart/ successfull"))
+	s.l.Println(logmodel.Logdata("102-api", "😃", string(jdata), "DELETE: /cart/ successfull"))
 }
 
 type Cart struct {
@@ -145,12 +145,12 @@ func (s *Cart) post(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid Body:: body should be {'uid': int}"))
-		s.l.Printf(logmodel.Logdata("103", "😥", err.Error(), "error FromJson in POST: /cart"))
+		s.l.Printf(logmodel.Logdata("103-api", "😥", err.Error(), "error FromJson in POST: /cart"))
 	}
 
 	jdata, err := json.Marshal(userid)
 	if err != nil {
-		s.l.Println(logmodel.Logdata("103", "😥", err.Error(), "error marshalling json in POST: /cart"))
+		s.l.Println(logmodel.Logdata("103-api", "😥", err.Error(), "error marshalling json in POST: /cart"))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error"))
 		return
@@ -162,7 +162,7 @@ func (s *Cart) post(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte("Successfully created"))
-	s.l.Println(logmodel.Logdata("103", "😃", string(jdata), "POST: /cart successfull"))
+	s.l.Println(logmodel.Logdata("103-api", "😃", string(jdata), "POST: /cart successfull"))
 }
 
 func (s *Cart) put(w http.ResponseWriter, r *http.Request) {
@@ -172,12 +172,12 @@ func (s *Cart) put(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid Body:: body should be {'uid': int,'pid':int }"))
-		s.l.Printf(logmodel.Logdata("104", "😥", err.Error(), "error FromJson in PUT: /cart"))
+		s.l.Printf(logmodel.Logdata("104-api", "😥", err.Error(), "error FromJson in PUT: /cart"))
 	}
 
 	jdata, err := json.Marshal(productid)
 	if err != nil {
-		s.l.Println(logmodel.Logdata("103", "😥", err.Error(), "error marshalling json in POST: /cart"))
+		s.l.Println(logmodel.Logdata("104-api", "😥", err.Error(), "error marshalling json in PUT: /cart"))
 		w.WriteHeader(http.StatusInternalServerError)
 		w.Write([]byte("error"))
 		return
@@ -190,7 +190,7 @@ func (s *Cart) put(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusAccepted)
 	w.Write([]byte("Successfully added to cart"))
-	s.l.Println(logmodel.Logdata("103", "😃", string(jdata), "POST: /cart successfull"))
+	s.l.Println(logmodel.Logdata("104-api", "😃", string(jdata), "PUT: /cart successfull"))
 
 }
 func (s *Cart) delete(w http.ResponseWriter, r *http.Request) {
@@ -200,7 +200,15 @@ func (s *Cart) delete(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		w.Write([]byte("invalid Body:: body should be {'uid': int,'pid':int }"))
-		s.l.Printf("error retriving data")
+		s.l.Printf(logmodel.Logdata("105-api", "😥", err.Error(), "error FromJson in DELETE: /cart"))
+	}
+
+	jdata, err := json.Marshal(productid)
+	if err != nil {
+		s.l.Println(logmodel.Logdata("105-api", "😥", err.Error(), "error marshalling json in DELETE: /cart"))
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("error"))
+		return
 	}
 
 	s.l.Printf("retrived data : %#v", productid)
@@ -211,4 +219,5 @@ func (s *Cart) delete(w http.ResponseWriter, r *http.Request) {
 
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("product deleted from cart successfully"))
+	s.l.Println(logmodel.Logdata("105-api", "😃", string(jdata), "DELETE: /cart successfull"))
 }

@@ -10,21 +10,26 @@ import (
 
 	"github.com/capslock-inc/gprc-demo/Api/asset"
 	"github.com/capslock-inc/gprc-demo/Api/handlers"
+	"github.com/capslock-inc/gprc-demo/logmodel"
 )
 
 func main() {
 	// logger
-	logs := log.New(os.Stdout, "Ecommerce-Api 👉 ", log.LstdFlags)
+	logs := logmodel.Logger("API Gateway 👉 ")
 
 	// rpc connection
-	cartRPC := asset.CartClientRPC(logs)
+	cartRPC, err := asset.CartClientRPC(logs)
 
 	// server handler
 	servermux := http.NewServeMux()
-	servermux.Handle("/", handlers.NewRoot(logs))
-	servermux.Handle("/cart/", handlers.NewCartWithParams(logs, cartRPC))
-	servermux.Handle("/cart", handlers.NewCart(logs, cartRPC))
 
+	if err != nil {
+		logs.Fatalf("error connecting rpc server")
+	} else {
+		servermux.Handle("/", handlers.NewRoot(logs))
+		servermux.Handle("/cart/", handlers.NewCartWithParams(logs, cartRPC))
+		servermux.Handle("/cart", handlers.NewCart(logs, cartRPC))
+	}
 	// server
 	server := &http.Server{
 		Addr:         ":8000",

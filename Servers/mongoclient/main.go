@@ -8,10 +8,10 @@ import (
 
 	"fmt"
 	"log"
-	"os"
 
 	mongoclientmodel "github.com/capslock-inc/gprc-demo/Protos/database/mongoclient"
 	core "github.com/capslock-inc/gprc-demo/Servers/mongoclient/Core"
+	"github.com/capslock-inc/gprc-demo/logmodel"
 	"github.com/joho/godotenv"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
@@ -28,7 +28,7 @@ func DbINIT(port int) (*mongo.Client, context.Context) {
 	}
 
 	// parseing mongodb url
-	dburl := fmt.Sprintf("mongodb://%s:%s@localhost:%d", os.Getenv("ADMIN"), os.Getenv("PASSWORD"), port)
+	dburl := fmt.Sprintf("mongodb://root:password@localhost:%d", port)
 
 	// creating new client for mongodb
 	client, err := mongo.NewClient(options.Client().ApplyURI(dburl))
@@ -62,6 +62,9 @@ func main() {
 	mongoport := flag.Int("mongoport", 27017, "mongodb port")
 	// parsing flag data
 	flag.Parse()
+
+	// logger
+	logs := logmodel.Logger("MongoClient Server 👉 ")
 	// initiating mongodb
 	client, ctx := DbINIT(*mongoport)
 
@@ -73,8 +76,8 @@ func main() {
 		log.Fatalf("error initiating net.listen : %v", err)
 	}
 	grpcserver := grpc.NewServer()
-	mongoclientmodel.RegisterMongoClientServiceServer(grpcserver, &core.MongoClientServer{Client: client})
-	log.Printf("🚀 server listening to %v", listen.Addr())
+	mongoclientmodel.RegisterMongoClientServiceServer(grpcserver, &core.MongoClientServer{Client: client, Logs: logs})
+	logs.Printf("🚀 server listening to %v", listen.Addr())
 	if err := grpcserver.Serve(listen); err != nil {
 		log.Fatalf("failed to serve: %v", err)
 	}

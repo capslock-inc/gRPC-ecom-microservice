@@ -15,8 +15,11 @@ func NewRoot(l *log.Logger) *Root {
 
 func (s *Root) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 	s.l.Printf("🥳 Root visited by %s with method: %s", r.RemoteAddr, r.Method)
-	w.Write([]byte(`/Cart 👉 get,post,put,delete 
-/Porduct 👉  get,post,put,delete
-/User 👉  get,post,put,delete
+	w.Write([]byte(`/Cart 👉 post(Create cart){"uid":int},
+put(add to cart){"uid":int,"pid":int},
+delete(delete item from cart){"uid":int,"pid":int}.
+
+/Cart/uid 👉 get(get item from cart){},
+delete(delete cart){}. 
 	`))
 }

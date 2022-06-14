@@ -13,3 +13,8 @@ mongoclient:
 	
 alldockerup:
 	sudo docker-compose up -d
+
+buildallservice:
+	docker build --target apigateway -t apigateway:latest .
+	docker build --target cartserver -t cartserver:latest .
+	docker build --target mongoclientserver -t mongoclientserver:latest .

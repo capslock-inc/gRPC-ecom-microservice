@@ -8,4 +8,18 @@ services:
       MONGO_INITDB_ROOT_PASSWORD: "password"
     ports:
       - 27017:27017
-    restart: unless-stopped
+  mongoclient:
+    image:  mongoclientserver:latest
+    container_name: mongoclient
+    ports:
+      - 8401:8401
+  cart:
+    image:  cartserver:latest
+    container_name: cart
+    ports:
+      - 8403:8403
+  apigateway:
+    image : apigateway:latest
+    container_name: gateway
+    ports:
+      - 8000:8000
