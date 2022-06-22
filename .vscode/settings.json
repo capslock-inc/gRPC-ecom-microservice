@@ -13,5 +13,12 @@
     ],
     "editor.tokenColorCustomizations": {
         
+    },
+    "yaml.schemas": {
+        "https://json.schemastore.org/kustomization.json": [
+            "file:///home/althaf/go/src/github.com/capslock-inc/gprc-demo/k8s/elastic.yaml",
+            "file:///home/althaf/go/src/github.com/capslock-inc/gprc-demo/k8s/mongo.yaml",
+            "file:///home/althaf/go/src/github.com/capslock-inc/gprc-demo/k8s/mongoclient.yaml"
+        ]
     }
 }

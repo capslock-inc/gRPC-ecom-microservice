@@ -6,19 +6,26 @@ import (
 	"fmt"
 	"log"
 	"net"
+	"os"
 	"time"
 
 	cartmodel "github.com/capslock-inc/gprc-demo/Protos/cart"
 	mongoclientmodel "github.com/capslock-inc/gprc-demo/Protos/database/mongoclient"
 	core "github.com/capslock-inc/gprc-demo/Servers/cart/Core"
 	"github.com/capslock-inc/gprc-demo/logmodel"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
 
 func grpcclientformongoclient() (mongoclientmodel.MongoClientServiceClient, *grpc.ClientConn) {
-	rpcserveraddress := "localhost:8401"
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("err loading: %v", err)
+	}
+	rpcserveraddress := fmt.Sprintf("%s:8401", os.Getenv("MONGOCLIENT"))
 
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
+	log.Println(rpcserveraddress)
 	conn, err := grpc.DialContext(
 		ctx,
 		rpcserveraddress,

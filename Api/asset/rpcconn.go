@@ -2,17 +2,24 @@ package asset
 
 import (
 	"context"
+	"fmt"
 	"log"
+	"os"
 	"time"
 
 	cartmodel "github.com/capslock-inc/gprc-demo/Protos/cart"
+	"github.com/joho/godotenv"
 	"google.golang.org/grpc"
 )
 
 func CartClientRPC(l *log.Logger) (cartmodel.CartServiceClient, error) {
-	addr := ":8403"
-
-	ctx, _ := context.WithTimeout(context.Background(), 5*time.Second)
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatalf("err loading: %v", err)
+	}
+	addr := fmt.Sprintf("%s:8403", os.Getenv("CART"))
+	l.Println(addr)
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 	conn, err := grpc.DialContext(
 		ctx,
 		addr,

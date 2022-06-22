@@ -1,0 +1,30 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongoclient
+spec:
+  selector:
+    matchLabels:
+      app: mongoclient
+  template:
+    metadata:
+      labels:
+        app: mongoclient
+    spec:
+      containers:
+      - name: mongoclient
+        image: mongoclientserver:latest
+        imagePullPolicy: IfNotPresent
+        resources:
+          limits:
+            memory: "128Mi"
+            cpu: "500m"
+        ports:
+        - containerPort: 8401
+        env:
+          - name: ADMIN
+            value: root
+          - name: PASSWORD
+            value: password
+          - name: HOST
+            value: mongodb

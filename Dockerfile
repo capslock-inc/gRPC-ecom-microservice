@@ -42,7 +42,7 @@ COPY . ./
 
 RUN go build ./Servers/mongoclient/main.go
 
-ENV ADMIN="root"
-ENV PASSWORD="password"
-
 CMD [ "./main" ]
+
+FROM fluent/fluentd AS fluentd-elastic
+RUN ["gem","install","fluent-plugin-elasticsearch","--no-rdoc","--no-ri"]

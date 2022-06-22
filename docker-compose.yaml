@@ -1,25 +1,112 @@
-version: "3.3"
+version: "3"
 services:
+  fluentd:
+    container_name: fluentd
+    networks:
+      - grpc-network
+    user: root
+    image: fluentd-elastic
+    links:
+      - elasticsearch
+    volumes:
+      - /var/lib/docker/containers:/fluentd/log/containers
+      - ./fluent.conf:/fluentd/etc/fluent.conf
+    ports:
+      - "24224:24224"
+      - "24224:24224/udp"
   mongodb:
-    image : mongo:4.4
+    restart: always
     container_name: mongodb
+    image : mongo:4.4
     environment:
       MONGO_INITDB_ROOT_USERNAME: "root"
       MONGO_INITDB_ROOT_PASSWORD: "password"
     ports:
-      - 27017:27017
+      - "27017:27017"
+    networks:
+      - grpc-network
   mongoclient:
+    restart: always
     image:  mongoclientserver:latest
     container_name: mongoclient
+    env_file: .env
+    environment:
+      WAIT_HOSTS: mongodb:27017
+    depends_on:
+      - mongodb
     ports:
-      - 8401:8401
+      - "8401:8401"
+    networks:
+      - grpc-network
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
   cart:
+    restart: always
     image:  cartserver:latest
     container_name: cart
+    environment:
+      WAIT_HOSTS: mongoclient:8401
+    depends_on:
+      - mongoclient
+    networks:
+      - grpc-network
     ports:
-      - 8403:8403
+      - "8403:8403"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
   apigateway:
+    restart: always
     image : apigateway:latest
     container_name: gateway
+    environment:
+      WAIT_HOSTS: cart:8403
+    depends_on:
+      - cart
+    networks:
+      - grpc-network
     ports:
-      - 8000:8000
+      - "8000:8000"
+    logging:
+      driver: "fluentd"
+      options:
+        fluentd-address: localhost:24224
+  elasticsearch:
+    image: elasticsearch:8.2.2
+    container_name: elasticsearch
+    networks:
+      - grpc-network
+    environment:
+      - xpack.security.enabled=false
+      - "discovery.type=single-node"
+      - "ES_JAVA_OPTS=-Xms512m -Xmx512m"
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    ports:
+      - 9200:9200
+    volumes:
+      - grpcdata:/usr/share/elasticsearch/data
+  kibana:
+    image: kibana:8.2.3
+    container_name: kibana
+    networks:
+      - grpc-network
+    environment:
+      ELASTICSEARCH_URL: "http://elasticsearch:9200"
+    ports:
+      - 5601:5601
+    depends_on:
+      - elasticsearch
+networks:
+  grpc-network:
+    external: true 
+volumes:
+  grpcdata:
+    driver: local
+
+  

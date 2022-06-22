@@ -8,6 +8,7 @@ import (
 
 	"fmt"
 	"log"
+	"os"
 
 	mongoclientmodel "github.com/capslock-inc/gprc-demo/Protos/database/mongoclient"
 	core "github.com/capslock-inc/gprc-demo/Servers/mongoclient/Core"
@@ -28,17 +29,17 @@ func DbINIT(port int) (*mongo.Client, context.Context) {
 	}
 
 	// parseing mongodb url
-	dburl := fmt.Sprintf("mongodb://root:password@localhost:%d", port)
+	dburl := fmt.Sprintf("mongodb://%s:%s@%s:%d", os.Getenv("ADMIN"), os.Getenv("PASSWORD"), os.Getenv("HOST"), port)
 
 	// creating new client for mongodb
+	log.Println(dburl)
 	client, err := mongo.NewClient(options.Client().ApplyURI(dburl))
 	if err != nil {
 		log.Fatalf("newclientreturnerror:%v", err)
 	}
 
 	// setting  timeout context
-	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-	defer cancel()
+	ctx, _ := context.WithTimeout(context.Background(), 10*time.Second)
 
 	// establishing db connection
 	err = client.Connect(ctx)

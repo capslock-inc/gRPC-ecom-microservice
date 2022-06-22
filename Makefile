@@ -1,8 +1,5 @@
 proto-generate:
-	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./Protos/users/user.proto
-	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./Protos/database/postgresclient/postgresclient.proto
 	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./Protos/database/mongoclient/mongoclient.proto
-	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./Protos/product/product.proto
 	protoc --go_out=. --go_opt=paths=source_relative --go-grpc_out=. --go-grpc_opt=paths=source_relative ./Protos/cart/cart.proto
 
 tidy:
@@ -18,3 +15,6 @@ buildallservice:
 	docker build --target apigateway -t apigateway:latest .
 	docker build --target cartserver -t cartserver:latest .
 	docker build --target mongoclientserver -t mongoclientserver:latest .
+
+buildpods:
+	kubectl create -f k8s/elastic.yaml

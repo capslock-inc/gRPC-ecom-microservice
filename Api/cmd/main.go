@@ -16,7 +16,6 @@ import (
 func main() {
 	// logger
 	logs := logmodel.Logger("API Gateway 👉 ")
-
 	// rpc connection
 	cartRPC, err := asset.CartClientRPC(logs)
 
